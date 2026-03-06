@@ -132,4 +132,65 @@ class TerminalBufferTest {
 
         assertEquals("ab  \n    ", buffer.getScreenAsString());
     }
+
+    @Test
+    void getLineAsStringReturnsRequestedRow() {
+        TerminalBuffer buffer = new TerminalBuffer(5, 3, 10);
+        buffer.writeText("abc");
+
+        assertEquals("abc  ", buffer.getLineAsString(0));
+    }
+
+    @Test
+    void getLineAsStringThrowsForInvalidRow() {
+        TerminalBuffer buffer = new TerminalBuffer(5, 3, 10);
+
+        assertThrows(IllegalArgumentException.class, () -> buffer.getLineAsString(-1));
+        assertThrows(IllegalArgumentException.class, () -> buffer.getLineAsString(3));
+    }
+
+    @Test
+    void getCellContentAtReturnsCellContent() {
+        TerminalBuffer buffer = new TerminalBuffer(5, 3, 10);
+        buffer.writeText("abc");
+
+        assertEquals("a", buffer.getCellContentAt(0, 0));
+        assertEquals("b", buffer.getCellContentAt(0, 1));
+        assertEquals("c", buffer.getCellContentAt(0, 2));
+    }
+
+    @Test
+    void getCellContentAtThrowsForInvalidCoordinates() {
+        TerminalBuffer buffer = new TerminalBuffer(5, 3, 10);
+
+        assertThrows(IllegalArgumentException.class, () -> buffer.getCellContentAt(-1, 0));
+        assertThrows(IllegalArgumentException.class, () -> buffer.getCellContentAt(0, -1));
+        assertThrows(IllegalArgumentException.class, () -> buffer.getCellContentAt(3, 0));
+        assertThrows(IllegalArgumentException.class, () -> buffer.getCellContentAt(0, 5));
+    }
+
+    @Test
+    void getStyleAtReturnsWrittenCellStyle() {
+        TerminalBuffer buffer = new TerminalBuffer(5, 3, 10);
+        CellStyle style = new CellStyle(
+                TerminalColor.RED,
+                TerminalColor.BLUE,
+                java.util.EnumSet.of(Style.BOLD)
+        );
+
+        buffer.setCurrentStyle(style);
+        buffer.writeText("x");
+
+        assertEquals(style, buffer.getStyleAt(0, 0));
+    }
+
+    @Test
+    void getScreenAsStringReturnsWholeScreen() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 10);
+        buffer.writeText("ab");
+        buffer.setCursor(1, 0);
+        buffer.writeText("cd");
+
+        assertEquals("ab  \ncd  ", buffer.getScreenAsString());
+    }
 }

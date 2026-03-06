@@ -170,4 +170,28 @@ public class TerminalBuffer {
 
         return sb.toString();
     }
+
+    public String getCellContentAt(int row, int col) {
+        if(row < 0 || row >= terminalSize.getHeight()) {
+            throw new IllegalArgumentException("Row must be within the bounds of the terminal");
+        }
+
+        if(col < 0 || col >= terminalSize.getWidth()) {
+            throw new IllegalArgumentException("Column must be within the bounds of the terminal");
+        }
+
+        return screen.get(row).getCell(col).getContent();
+    }
+
+    public CellStyle getStyleAt(int row, int col) {
+        if(row < 0 || row >= terminalSize.getHeight()) {
+            throw new IllegalArgumentException("Row must be within the bounds of the terminal");
+        }
+
+        if(col < 0 || col >= terminalSize.getWidth()) {
+            throw new IllegalArgumentException("Column must be within the bounds of the terminal");
+        }
+
+        return screen.get(row).getCell(col).getStyle();
+    }
 }
