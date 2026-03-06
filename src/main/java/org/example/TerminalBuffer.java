@@ -96,4 +96,29 @@ public class TerminalBuffer {
         checkNonNegative(n);
         cursorCol = clamp(this.cursorCol + n, 0, terminalSize.getWidth() - 1);
     }
+
+    public CellStyle getCurrentStyle() {
+        return currentStyle;
+    }
+
+    public void setCurrentStyle(CellStyle currentStyle) {
+        if(currentStyle == null) {
+            throw new IllegalArgumentException("Terminal Style cannot be null");
+        }
+        this.currentStyle = currentStyle;
+    }
+
+    public void writeText(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("Text cannot be null");
+        }
+
+        for (int i = cursorCol; i < terminalSize.getWidth() && i < cursorCol + text.length(); i++) {
+            String ch = text.substring(i - cursorCol, i - cursorCol + 1);
+            Cell newCell = new Cell(ch, currentStyle, CellType.BASIC);
+            screen.get(cursorRow).setCell(i, newCell);
+        }
+
+        moveCursorRight(text.length());
+    }
 }
