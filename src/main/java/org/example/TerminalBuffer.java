@@ -121,4 +121,32 @@ public class TerminalBuffer {
 
         moveCursorRight(text.length());
     }
+
+    public void fillLine(int row, String content, CellStyle style) {
+        if(row < 0 || row >= terminalSize.getHeight()) {
+            throw new IllegalArgumentException("Filled row must be within the bounds of the terminal");
+        }
+
+        if(content == null) {
+            throw new IllegalArgumentException("Content cannot be null");
+        }
+
+        if(style == null) {
+            throw new IllegalArgumentException("Style cannot be null");
+        }
+
+        screen.get(row).fill(content, style);
+    }
+
+    public void clearScreen() {
+        for (int i = 0; i < terminalSize.getHeight(); i++) {
+            screen.set(i, new Line(terminalSize.getWidth()));
+        }
+        cursorCol = cursorRow = 0;
+    }
+
+    public void clearScreenAndScrollback() {
+        clearScreen();
+        scrollback.clear();
+    }
 }
