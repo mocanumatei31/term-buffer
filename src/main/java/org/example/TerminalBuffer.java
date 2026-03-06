@@ -8,6 +8,7 @@ import java.util.List;
 public class TerminalBuffer {
     private TerminalSize terminalSize;
     private int maxScrollback;
+    private CellStyle currentStyle;
 
     private int cursorRow;
     private int cursorCol;
@@ -35,6 +36,8 @@ public class TerminalBuffer {
         for (int i = 0; i < height; i++) {
             screen.add(new Line(width));
         }
+
+        this.currentStyle = CellStyle.defaultStyle();
     }
 
 }

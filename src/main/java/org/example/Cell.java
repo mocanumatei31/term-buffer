@@ -40,4 +40,11 @@ public class Cell {
     public int hashCode() {
         return Objects.hash(content, style, type);
     }
+
+    public static Cell wideCharEnd(CellStyle style) {
+        return new Cell(
+                " ",
+                style,
+                CellType.DOUBLE_WIDTH_END);
+    }
 }
