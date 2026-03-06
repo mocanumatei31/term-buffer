@@ -149,4 +149,25 @@ public class TerminalBuffer {
         clearScreen();
         scrollback.clear();
     }
+
+    public String getLineAsString(int row) {
+        if(row < 0 || row >= terminalSize.getHeight()) {
+            throw new IllegalArgumentException("Filled row must be within the bounds of the terminal");
+        }
+        return screen.get(row).toString();
+    }
+
+    public String getScreenAsString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < terminalSize.getHeight(); i++) {
+            sb.append(screen.get(i).toString());
+
+            if (i < terminalSize.getHeight() - 1) {
+                sb.append('\n');
+            }
+        }
+
+        return sb.toString();
+    }
 }
