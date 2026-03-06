@@ -40,4 +40,60 @@ public class TerminalBuffer {
         this.currentStyle = CellStyle.defaultStyle();
     }
 
+    public int getCursorRow() {
+        return cursorRow;
+    }
+
+    public int getCursorCol() {
+        return cursorCol;
+    }
+
+    public void setCursorRow(int cursorRow) {
+        if(cursorRow < 0 || cursorRow >= terminalSize.getHeight()) {
+            throw new IllegalArgumentException("Cursor row must be within the bounds of the terminal");
+        }
+        this.cursorRow = cursorRow;
+    }
+
+    public void setCursorCol(int cursorCol) {
+        if(cursorCol < 0 || cursorCol >= terminalSize.getWidth()) {
+            throw new IllegalArgumentException("Cursor column must be within the bounds of the terminal");
+        }
+        this.cursorCol = cursorCol;
+    }
+
+    public void setCursor(int row, int col) {
+        setCursorRow(row);
+        setCursorCol(col);
+    }
+
+    private void checkNonNegative(int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("Movement amount cannot be negative");
+        }
+    }
+
+    private int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    public void moveCursorUp(int n) {
+        checkNonNegative(n);
+        cursorRow = clamp(this.cursorRow - n, 0, terminalSize.getHeight() - 1);
+    }
+
+    public void moveCursorDown(int n) {
+        checkNonNegative(n);
+        cursorRow = clamp(this.cursorRow + n, 0, terminalSize.getHeight() - 1);
+    }
+
+    public void moveCursorLeft(int n) {
+        checkNonNegative(n);
+        cursorCol = clamp(this.cursorCol - n, 0, terminalSize.getWidth() - 1);
+    }
+
+    public void moveCursorRight(int n) {
+        checkNonNegative(n);
+        cursorCol = clamp(this.cursorCol + n, 0, terminalSize.getWidth() - 1);
+    }
 }
