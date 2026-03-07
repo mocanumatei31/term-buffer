@@ -193,4 +193,59 @@ class TerminalBufferTest {
 
         assertEquals("ab  \ncd  ", buffer.getScreenAsString());
     }
+
+    @Test
+    void insertEmptyLineAtBottomKeepsScreenHeightUnchanged() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 10);
+
+        buffer.insertEmptyLineAtBottom();
+
+        assertEquals("    \n    ", buffer.getScreenAsString());
+    }
+
+    @Test
+    void insertEmptyLineAtBottomShiftsScreenUpAndAddsBlankBottomLine() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 10);
+
+        buffer.writeText("aa");
+        buffer.setCursor(1, 0);
+        buffer.writeText("bb");
+
+        buffer.insertEmptyLineAtBottom();
+
+        assertEquals("bb  \n    ", buffer.getScreenAsString());
+        assertEquals(1, buffer.getScrollbackSize());
+    }
+
+    @Test
+    void getScrollbackSizeStartsAtZero() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 10);
+
+        assertEquals(0, buffer.getScrollbackSize());
+    }
+
+    @Test
+    void getScreenAndScrollbackAsStringReturnsOnlyScreenWhenScrollbackIsEmpty() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 10);
+        buffer.writeText("ab");
+
+        assertEquals("ab  \n    ", buffer.getScreenAndScrollbackAsString());
+    }
+
+    @Test
+    void insertEmptyLineAtBottomDiscardsOldestScrollbackLineWhenMaxExceeded() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 1);
+
+        buffer.writeText("aa");
+        buffer.setCursor(1, 0);
+        buffer.writeText("bb");
+        buffer.insertEmptyLineAtBottom();
+
+        buffer.setCursor(1, 0);
+        buffer.writeText("cc");
+        buffer.insertEmptyLineAtBottom();
+
+        assertEquals(1, buffer.getScrollbackSize());
+        assertEquals("bb  \ncc  \n    ", buffer.getScreenAndScrollbackAsString());
+    }
 }

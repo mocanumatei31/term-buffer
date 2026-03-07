@@ -194,4 +194,50 @@ public class TerminalBuffer {
 
         return screen.get(row).getCell(col).getStyle();
     }
+
+    private void addLineToScrollback(Line line) {
+        scrollback.addLast(line);
+
+        if(scrollback.size() > maxScrollback) {
+            scrollback.removeFirst();
+        }
+    }
+
+    public void insertEmptyLineAtBottom() {
+        Line newLine = new Line(terminalSize.getWidth());
+        screen.add(newLine);
+
+        if (screen.size() > terminalSize.getHeight()) {
+            Line removed = screen.removeFirst();
+            addLineToScrollback(removed);
+        }
+    }
+
+    public int getScrollbackSize() {
+        return scrollback.size();
+    }
+
+    public String getScreenAndScrollbackAsString() {
+        StringBuilder sb = new StringBuilder();
+
+        boolean first = true;
+
+        for (Line line : scrollback) {
+            if (!first) {
+                sb.append('\n');
+            }
+            sb.append(line.toString());
+            first = false;
+        }
+
+        for (Line line : screen) {
+            if (!first) {
+                sb.append('\n');
+            }
+            sb.append(line.toString());
+            first = false;
+        }
+
+        return sb.toString();
+    }
 }
