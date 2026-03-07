@@ -58,13 +58,12 @@ class TerminalBufferTest {
     }
 
     @Test
-    void writeTextStopsAtEndOfLine() {
+    void writeTextDoesNotMoveCursorPastLineEnd() {
         TerminalBuffer buffer = new TerminalBuffer(5, 3, 10);
         buffer.setCursor(0, 3);
 
         buffer.writeText("abcd");
 
-        assertEquals("   ab", buffer.getLineAsString(0));
         assertEquals(4, buffer.getCursorCol());
     }
 
@@ -247,5 +246,38 @@ class TerminalBufferTest {
 
         assertEquals(1, buffer.getScrollbackSize());
         assertEquals("bb  \ncc  \n    ", buffer.getScreenAndScrollbackAsString());
+    }
+
+    @Test
+    void newlineMovesCursorDown() {
+        TerminalBuffer buffer = new TerminalBuffer(5, 3, 10);
+
+        buffer.newline();
+
+        assertEquals(1, buffer.getCursorRow());
+        assertEquals(0, buffer.getCursorCol());
+    }
+
+    @Test
+    void newlineAtBottomScrollsScreen() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 10);
+
+        buffer.writeText("aa");
+        buffer.newline();
+        buffer.writeText("bb");
+
+        buffer.newline();
+
+        assertEquals("bb  \n    ", buffer.getScreenAsString());
+        assertEquals(1, buffer.getScrollbackSize());
+    }
+
+    @Test
+    void writeTextHandlesNewlineCharacter() {
+        TerminalBuffer buffer = new TerminalBuffer(4, 2, 10);
+
+        buffer.writeText("ab\ncd");
+
+        assertEquals("ab  \ncd  ", buffer.getScreenAsString());
     }
 }

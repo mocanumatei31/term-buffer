@@ -113,13 +113,19 @@ public class TerminalBuffer {
             throw new IllegalArgumentException("Text cannot be null");
         }
 
-        for (int i = cursorCol; i < terminalSize.getWidth() && i < cursorCol + text.length(); i++) {
-            String ch = text.substring(i - cursorCol, i - cursorCol + 1);
-            Cell newCell = new Cell(ch, currentStyle, CellType.BASIC);
-            screen.get(cursorRow).setCell(i, newCell);
-        }
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
 
-        moveCursorRight(text.length());
+            if (ch == '\n') {
+                newline();
+                continue;
+            }
+
+            Cell newCell = new Cell(String.valueOf(ch), currentStyle, CellType.BASIC);
+            screen.get(cursorRow).setCell(cursorCol, newCell);
+
+            moveCursorRight(1);
+        }
     }
 
     public void fillLine(int row, String content, CellStyle style) {
@@ -249,4 +255,15 @@ public class TerminalBuffer {
         int inserted = screen.get(cursorRow).insertText(cursorCol, text, currentStyle);
         moveCursorRight(inserted);
     }
+
+    public void newline() {
+        cursorCol = 0;
+
+        if (cursorRow == terminalSize.getHeight() - 1) {
+            insertEmptyLineAtBottom();
+        } else {
+            cursorRow++;
+        }
+    }
+
 }
