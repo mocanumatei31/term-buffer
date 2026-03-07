@@ -240,4 +240,13 @@ public class TerminalBuffer {
 
         return sb.toString();
     }
+
+    public void insertText(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("Text cannot be null");
+        }
+
+        int inserted = screen.get(cursorRow).insertText(cursorCol, text, currentStyle);
+        moveCursorRight(inserted);
+    }
 }

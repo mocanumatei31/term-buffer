@@ -92,4 +92,37 @@ class LineTest {
 
         assertEquals("ABC", line.toString());
     }
+
+    @Test
+    void insertTextInBlankLineWorks() {
+        Line line = new Line(5);
+
+        int inserted = line.insertText(1, "ab", CellStyle.defaultStyle());
+
+        assertEquals(2, inserted);
+        assertEquals(" ab  ", line.toString());
+    }
+
+    @Test
+    void insertTextShiftsExistingContentRight() {
+        Line line = new Line(5);
+        line.fill("x", CellStyle.defaultStyle());
+
+        int inserted = line.insertText(2, "ab", CellStyle.defaultStyle());
+
+        assertEquals(2, inserted);
+        assertEquals("xxabx", line.toString());
+    }
+
+    @Test
+    void insertTextTruncatesAtRightEdge() {
+        Line line = new Line(5);
+        line.setCell(0, new Cell("a", CellStyle.defaultStyle(), CellType.BASIC));
+        line.setCell(1, new Cell("b", CellStyle.defaultStyle(), CellType.BASIC));
+        line.setCell(2, new Cell("c", CellStyle.defaultStyle(), CellType.BASIC));
+
+        int inserted = line.insertText(4, "xyz", CellStyle.defaultStyle());
+
+        assertEquals(1, inserted);
+    }
 }

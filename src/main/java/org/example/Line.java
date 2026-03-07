@@ -66,7 +66,36 @@ public class Line {
         return sb.toString();
     }
 
+    public int insertText(int startCol, String text, CellStyle style) {
+        checkColumn(startCol);
 
+        if (text == null) {
+            throw new IllegalArgumentException("Text cannot be null");
+        }
+        if (style == null) {
+            throw new IllegalArgumentException("Style cannot be null");
+        }
+
+        if (text.isEmpty()) {
+            return 0;
+        }
+
+        int insertCount = Math.min(text.length(), length() - startCol);
+
+        if (insertCount <= 0) {
+            return 0;
+        }
+
+        for (int i = length() - 1; i >= startCol + insertCount; i--) {
+            cells[i] = cells[i - insertCount];
+        }
+        for (int i = 0; i < insertCount; i++) {
+            String ch = text.substring(i, i + 1);
+            cells[startCol + i] = new Cell(ch, style, CellType.BASIC);
+        }
+
+        return insertCount;
+    }
 }
 
 
